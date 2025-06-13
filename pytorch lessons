@@ -1,0 +1,27 @@
+import torch
+import torch.nn as nn
+import torch.nn.functional as F 
+import numpy as np
+x= torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float32)
+print(x)
+# Create a 2D tensor with shape (2, 3)
+y = torch.tensor([[7, 8, 9], [10, 11, 12]], dtype=torch.float32)        
+# Perform element-wise addition
+z = x + y   
+print(z)    
+# Perform element-wise multiplication
+z_mul = x * y   
+print(z_mul)
+# Perform element-wise division
+z_div = x / y
+print(z_div)
+# Perform element-wise subtraction
+z_sub = x - y
+print(z_sub)
+# Perform matrix multiplication
+z_matmul = torch.matmul(x, y.T)  # Transpose y for proper matrix multiplication
+print(z_matmul) 
+# Perform element-wise exponentiation
+z_exp = torch.exp(x)
+
+print(z_exp)
