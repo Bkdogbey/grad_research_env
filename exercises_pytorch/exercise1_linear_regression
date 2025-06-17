@@ -1,0 +1,84 @@
+import torch
+import torch.nn as nn
+import matplotlib.pyplot as plt
+
+# 1. Create synthetic data
+torch.manual_seed(42)  # for reproducibility
+
+# Generate inputs and normalize
+X = torch.arange(0, 100, 0.5).unsqueeze(1)  # Shape: (200, 1)
+X = (X - X.mean()) / X.std()
+
+# Generate targets with a known linear relationship + noise
+true_weight = 3.0
+true_bias = 10.0
+y = true_weight * X + true_bias + torch.randn_like(X) * 0.5  # smaller noise
+
+# Split data into train/test
+train_X, test_X = X[:150], X[150:]
+train_y, test_y = y[:150], y[150:]
+
+# 2. Define a linear regression model
+class LinearRegressionModel(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.linear = nn.Linear(1, 1)  # one input, one output
+
+    def forward(self, x):
+        return self.linear(x)
+
+model = LinearRegressionModel()
+
+# 3. Define loss and optimizer
+loss_fn = nn.MSELoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+
+# 4. Training loop
+epochs = 1000
+loss_history = []
+
+for epoch in range(epochs):
+    model.train()
+    
+    # Forward pass
+    y_pred = model(train_X)
+    loss = loss_fn(y_pred, train_y)
+    loss_history.append(loss.item())
+
+    # Backward pass and optimize
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
+
+    # Print progress
+    if epoch % 100 == 0:
+        print(f"Epoch {epoch} | Loss: {loss.item():.4f}")
+
+# 5. Print learned weights
+learned_weight = model.linear.weight.item()
+learned_bias = model.linear.bias.item()
+print(f"\nLearned weight: {learned_weight:.4f} | Learned bias: {learned_bias:.4f}")
+
+# 6. Plot loss over time
+plt.figure(figsize=(6, 4))
+plt.plot(loss_history)
+plt.title("Training Loss Over Epochs")
+plt.xlabel("Epoch")
+plt.ylabel("MSE Loss")
+plt.grid(True)
+plt.show()
+
+# 7. Plot predictions vs actual
+model.eval()
+with torch.inference_mode():
+    test_preds = model(test_X)
+
+plt.figure(figsize=(6, 4))
+plt.scatter(test_X, test_y, label="Actual", alpha=0.7)
+plt.scatter(test_X, test_preds, label="Predicted", color="red", alpha=0.7)
+plt.title("Model Predictions vs Actual")
+plt.xlabel("Normalized X")
+plt.ylabel("y")
+plt.legend()
+plt.grid(True)
+plt.show()
