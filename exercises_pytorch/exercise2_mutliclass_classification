@@ -3,7 +3,7 @@ from torch import nn
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 
-# 1. Load the data
+# Loading the data
 transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
 train_data = datasets.FashionMNIST(root="data", train=True, download=True, transform=transform)
 test_data = datasets.FashionMNIST(root="data", train=False, download=True, transform=transform)
@@ -11,7 +11,7 @@ test_data = datasets.FashionMNIST(root="data", train=False, download=True, trans
 train_loader = DataLoader(train_data, batch_size=64, shuffle=True)
 test_loader = DataLoader(test_data, batch_size=64)
 
-# 2. Define the model
+#  model
 model = nn.Sequential(
     nn.Flatten(),
     nn.Linear(28 * 28, 128),
@@ -19,11 +19,11 @@ model = nn.Sequential(
     nn.Linear(128, 10)
 )
 
-# 3. Loss and optimizer
+#  Loss and optimizer
 loss_fn = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
-# 4. Training loop
+#  Training loop
 for epoch in range(5):
     for images, labels in train_loader:
         preds = model(images)
@@ -35,7 +35,7 @@ for epoch in range(5):
 
     print(f"Epoch {epoch+1} | Loss: {loss.item():.4f}")
 
-# 5. Evaluate accuracy
+#  Evaluate accuracy
 correct = 0
 total = 0
 model.eval()
